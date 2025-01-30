@@ -1,0 +1,73 @@
+const asyncHandler = require("express-async-handler");
+const Products = require("../models/productsModel");
+
+
+//@desc Get all products
+//@route GET /api/product
+//@access public
+const getProducts = asyncHandler(async(req, res) => {
+    const products = await Products.find();
+    res.status(200).json(products);
+});
+
+//@desc Get products for
+//@route GET /api/product/:id
+//@access public
+const getProduct = asyncHandler(async(req, res) => {
+    const product = await Products.findById(req.params.id);
+    if(!product){
+        res.status(404);
+        throw new Error("Product not found");
+        
+    }
+    res.status(200).json(product);
+});
+
+//@desc Create NEW product
+//@route POST /api/product
+//@access public
+const createProduct = asyncHandler(async(req, res) => {
+    console.log("the request body is :",req.body);
+    const {name, qty, price } = req.body;
+    if(!name || !qty || !price){
+        res.status(400);
+        throw new Error("All fields are mandatory");
+    }
+    const product = await Products.create({
+        name,
+        qty,
+        price
+    })
+    res.status(201).json(product);
+});
+
+//@desc update product
+//@route PUT /api/product/:id
+//@access public
+const updateProduct = asyncHandler(async(req, res) => {
+    const product = await Products.findById(req.params.id);
+    if(!product){
+        res.status(404);
+        throw new Error("Product not found");
+    }
+    const updatedProduct = await Products.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+    );
+    res.status(200).json(updatedProduct);
+});
+
+//@desc delete product
+//@route DELETE /api/product/:id
+//@access public
+const deleteProduct = asyncHandler(async(req, res) => {
+    const product = await Products.findById(req.params.id);
+    if(!product){
+        res.status(404);
+        throw new Error("Product not found");
+    }
+    await Products.findByIdAndDelete(req.params.id);
+    res.status(200).json(product);
+});
+module.exports = {createProduct, updateProduct, getProducts,getProduct, deleteProduct};
