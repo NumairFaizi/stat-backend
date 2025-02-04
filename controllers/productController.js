@@ -4,18 +4,18 @@ const Products = require("../models/productsModel");
 
 //@desc Get all products
 //@route GET /api/product
-//@access public
+//@access private
 const getProducts = asyncHandler(async(req, res) => {
-    const products = await Products.find();
+    const products = await Products.find({user_id: req.user.id});
     res.status(200).json(products);
 });
 
 //@desc Get products for
 //@route GET /api/product/:id
-//@access public
+//@access private
 const getProduct = asyncHandler(async(req, res) => {
     const product = await Products.findById(req.params.id);
-    if(!product){
+    if(!product){ 
         res.status(404);
         throw new Error("Product not found");
         
@@ -25,7 +25,7 @@ const getProduct = asyncHandler(async(req, res) => {
 
 //@desc Create NEW product
 //@route POST /api/product
-//@access public
+//@access private
 const createProduct = asyncHandler(async(req, res) => {
     console.log("the request body is :",req.body);
     const {name, qty, price } = req.body;
@@ -43,7 +43,7 @@ const createProduct = asyncHandler(async(req, res) => {
 
 //@desc update product
 //@route PUT /api/product/:id
-//@access public
+//@access private
 const updateProduct = asyncHandler(async(req, res) => {
     const product = await Products.findById(req.params.id);
     if(!product){
@@ -60,7 +60,7 @@ const updateProduct = asyncHandler(async(req, res) => {
 
 //@desc delete product
 //@route DELETE /api/product/:id
-//@access public
+//@access private
 const deleteProduct = asyncHandler(async(req, res) => {
     const product = await Products.findById(req.params.id);
     if(!product){

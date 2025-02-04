@@ -11,8 +11,15 @@ const validateToken = asyncHandler(async(req, res, next) => {
                 res.status(401);
                 throw new Error("Unauthorized access");
             }
-            console.log(decoded);
+            req.user = decoded.user;
+            next();
         });
+
+        if (!token) {
+            res.status(401);
+            throw new Error("Unauthorized access!!");
+            
+        }
     }
 });
 module.exports = validateToken;
