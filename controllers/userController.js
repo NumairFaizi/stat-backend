@@ -1,4 +1,4 @@
-const asyncHandler = require('express-async-handler'); // Import asyncHandler
+const asyncHandler = require('express-async-handler');
 
 //@desc Register a user
 //@route POST /api/user/register
@@ -15,7 +15,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 //@desc Get current user
-//@route POST /api/user/current
+//@route GET /api/user/current
 //@access private
 const currentUser = asyncHandler(async (req, res) => {
     res.json({ message: "Current user information" });
