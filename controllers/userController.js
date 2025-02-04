@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require('../models/userModel');
 
 //@desc Register a user
@@ -28,11 +29,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
     console.log(`User created ${user}`)
     if (user) {
-        res.status(201).json({_id: user.id, phoneNumber: user.id,})
+        res.status(201).json({_id: user.id, phoneNumber: user.phoneNumber,})
     }else{
         res.status(400);
         throw new Error("User data is not valid");
-        
     }
     res.json({ message: "Register the user" });
 
@@ -42,7 +42,28 @@ const registerUser = asyncHandler(async (req, res) => {
 //@route POST /api/user/login
 //@access public
 const loginUser = asyncHandler(async (req, res) => {
-    res.json({ message: "Login user" });
+    const{phoneNumber,password} = req.body;
+    if (!phoneNumber || !password) {
+        res.status(400);
+        throw new Error("All fields are mandatory!");
+    }
+    const user = await User.findOne({phoneNumber});
+    //compare password with hashedpassword
+    if (user && (await bcrypt.compare(password, user.password))) {
+        const accessToken = jwt.sign({
+            user:{
+                username: user.username,
+                phoneNumber: user.phoneNumber,
+                id: user.id,
+            },
+        }, process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "50m"}
+    );
+        res.status(200).json({ accessToken});
+    }else{
+        res.status(401)
+        throw new Error("Invalid Credentials!!");
+    }
 });
 
 //@desc Get current user
