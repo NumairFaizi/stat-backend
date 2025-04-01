@@ -7,15 +7,15 @@ const User = require('../models/userModel');
 //@route POST /api/user/register
 //@access public
 const registerUser = asyncHandler(async (req, res) => {
-    const {username, phoneNumber, password} = req.body;
-    if (!username || !phoneNumber || !password){
+    const {username, password} = req.body;
+    if (!username || !password){
         res.status(400);s
         throw new Error("All fields are mandatory");
     }
-    const userAvailable = await User.findOne({phoneNumber});
+    const userAvailable = await User.findOne({username});
     if (userAvailable) {
         res.status(400);
-        throw new Error("Phone Number is already in use");
+        throw new Error("Username is already in use");
     }
 
     //Hash password 
@@ -23,18 +23,16 @@ const registerUser = asyncHandler(async (req, res) => {
     console.log("Hashed Passwords;",hashedPassword);
     const user = await User.create({
         username,
-        phoneNumber,
         password: hashedPassword,
     });
 
     console.log(`User created ${user}`)
     if (user) {
-        res.status(201).json({_id: user.id, phoneNumber: user.phoneNumber,})
+        return res.status(201).json({_id: user.id, message:'User created successfully'})
     }else{
         res.status(400);
         throw new Error("User data is not valid");
     }
-    res.json({ message: "Register the user" });
 
 });
 
@@ -42,18 +40,18 @@ const registerUser = asyncHandler(async (req, res) => {
 //@route POST /api/user/login
 //@access public
 const loginUser = asyncHandler(async (req, res) => {
-    const{phoneNumber,password} = req.body;
-    if (!phoneNumber || !password) {
+    const{username,password} = req.body;
+    if (!username || !password) {
         res.status(400);
         throw new Error("All fields are mandatory!");
     }
-    const user = await User.findOne({phoneNumber});
+    const user = await User.findOne({username});
     //compare password with hashedpassword
     if (user && (await bcrypt.compare(password, user.password))) {
         const accessToken = jwt.sign({
             user:{
                 username: user.username,
-                phoneNumber: user.phoneNumber,
+                username: user.username,
                 id: user.id,
             },
         }, process.env.ACCESS_TOKEN_SECRET,

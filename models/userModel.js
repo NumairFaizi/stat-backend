@@ -5,11 +5,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please enter a Username!"]
     },
-    phoneNumber:{
-        type: String,
-        required: [true, "Please enter your phone number!"],
-        unique: [true, "Phone number is already in use."]
-    },
+   
     password:{
         type: String,
         required: [true, "Please enter the password."],
