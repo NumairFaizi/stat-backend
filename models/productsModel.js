@@ -10,6 +10,10 @@ const productsSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add the Product name"],
     },
+    brand:{
+        type: String,
+        required: [true, "Please add the Product name"],
+    },
     qty:{
         type: String,
         required: [true, "Please add the Product Quantity"],

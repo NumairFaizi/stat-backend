@@ -27,9 +27,12 @@ const getProduct = asyncHandler(async(req, res) => {
 //@route POST /api/product
 //@access private
 const createProduct = asyncHandler(async(req, res) => {
-    console.log("the request body is :",req.body);
-    const {name, qty, price } = req.body;
-    if(!name || !qty || !price){
+
+    // console.log("the request body is :",req.body);
+
+    const {name, qty, price, brand } = req.body;
+
+    if(!name || !qty || !price || !brand){
         res.status(400);
         throw new Error("All fields are mandatory");
     }
@@ -37,9 +40,10 @@ const createProduct = asyncHandler(async(req, res) => {
         name,
         qty,
         price,
+        brand,
         user_id: req.user.id
     })
-    res.status(201).json(product);
+    res.status(201).json({product, message: "Product added Successfully"});
 });
 
 //@desc update product
