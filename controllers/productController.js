@@ -16,7 +16,7 @@ const getProducts = asyncHandler(async(req, res) => {
 const getProduct = asyncHandler(async(req, res) => {
     const product = await Products.findById(req.params.id);
     if(!product){ 
-        res.status(404);
+        res.status(404).json({message: "Product not found"});
         throw new Error("Product not found");
         
     }
@@ -60,7 +60,7 @@ const updateProduct = asyncHandler(async(req, res) => {
         req.body,
         { new: true }
     );
-    res.status(200).json(updatedProduct);
+    res.status(200).json({updatedProduct, message: "Product updated"});
 });
 
 //@desc delete product
@@ -73,6 +73,6 @@ const deleteProduct = asyncHandler(async(req, res) => {
         throw new Error("Product not found");
     }
     await Products.findByIdAndDelete(req.params.id);
-    res.status(200).json(product);
+    res.status(200).json({product, message: "product deleted"});
 });
 module.exports = {createProduct, updateProduct, getProducts,getProduct, deleteProduct};
