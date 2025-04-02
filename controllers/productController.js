@@ -6,7 +6,8 @@ const Products = require("../models/productsModel");
 //@route GET /api/product
 //@access private
 const getProducts = asyncHandler(async(req, res) => {
-    const products = await Products.find({user_id: req.user.id});
+
+    const products = await Products.find();
     res.status(200).json(products);
 });
 

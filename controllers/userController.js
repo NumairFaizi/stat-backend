@@ -7,12 +7,12 @@ const User = require('../models/userModel');
 //@route POST /api/user/register
 //@access public
 const registerUser = asyncHandler(async (req, res) => {
-    const {username, password} = req.body;
-    if (!username || !password){
-        res.status(400);s
+    const { username, password } = req.body;
+    if (!username || !password) {
+        res.status(400); s
         throw new Error("All fields are mandatory");
     }
-    const userAvailable = await User.findOne({username});
+    const userAvailable = await User.findOne({ username });
     if (userAvailable) {
         res.status(400);
         throw new Error("Username is already in use");
@@ -20,7 +20,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     //Hash password 
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("Hashed Passwords;",hashedPassword);
+    console.log("Hashed Passwords;", hashedPassword);
     const user = await User.create({
         username,
         password: hashedPassword,
@@ -28,8 +28,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
     console.log(`User created ${user}`)
     if (user) {
-        return res.status(201).json({_id: user.id, message:'User created successfully'})
-    }else{
+        return res.status(201).json({ _id: user.id, message: 'User created successfully' })
+    } else {
         res.status(400);
         throw new Error("User data is not valid");
     }
@@ -40,26 +40,30 @@ const registerUser = asyncHandler(async (req, res) => {
 //@route POST /api/user/login
 //@access public
 const loginUser = asyncHandler(async (req, res) => {
-    const{username,password} = req.body;
+    const { username, password } = req.body;
+
+    // console.log(req.body)
+    
     if (!username || !password) {
         res.status(400);
         throw new Error("All fields are mandatory!");
     }
-    const user = await User.findOne({username});
+    const user = await User.findOne({ username });
     //compare password with hashedpassword
     if (user && (await bcrypt.compare(password, user.password))) {
         const accessToken = jwt.sign({
-            user:{
+            user: {
                 username: user.username,
+                
                 username: user.username,
                 id: user.id,
             },
         }, process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "50m"}
-    );
-        res.status(200).json({ accessToken});
-    }else{
-        res.status(401)
+            { expiresIn: "50m" }
+        );
+        res.status(200).json({ accessToken });
+    } else {
+        return res.status(401).json({ message: "Invalid Credentials!!" })
         throw new Error("Invalid Credentials!!");
     }
 });
