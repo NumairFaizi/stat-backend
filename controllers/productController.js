@@ -6,7 +6,8 @@ const Products = require("../models/productsModel");
 //@route GET /api/product
 //@access private
 const getProducts = asyncHandler(async(req, res) => {
-    const products = await Products.find({user_id: req.user.id});
+
+    const products = await Products.find();
     res.status(200).json(products);
 });
 
@@ -16,7 +17,7 @@ const getProducts = asyncHandler(async(req, res) => {
 const getProduct = asyncHandler(async(req, res) => {
     const product = await Products.findById(req.params.id);
     if(!product){ 
-        res.status(404);
+        res.status(404).json({message: "Product not found"});
         throw new Error("Product not found");
         
     }
@@ -27,9 +28,12 @@ const getProduct = asyncHandler(async(req, res) => {
 //@route POST /api/product
 //@access private
 const createProduct = asyncHandler(async(req, res) => {
-    console.log("the request body is :",req.body);
-    const {name, qty, price } = req.body;
-    if(!name || !qty || !price){
+
+    // console.log("the request body is :",req.body);
+
+    const {name, qty, price, brand } = req.body;
+
+    if(!name || !qty || !price || !brand){
         res.status(400);
         throw new Error("All fields are mandatory");
     }
@@ -37,9 +41,10 @@ const createProduct = asyncHandler(async(req, res) => {
         name,
         qty,
         price,
+        brand,
         user_id: req.user.id
     })
-    res.status(201).json(product);
+    res.status(201).json({product, message: "Product added Successfully"});
 });
 
 //@desc update product
@@ -56,7 +61,7 @@ const updateProduct = asyncHandler(async(req, res) => {
         req.body,
         { new: true }
     );
-    res.status(200).json(updatedProduct);
+    res.status(200).json({updatedProduct, message: "Product updated"});
 });
 
 //@desc delete product
@@ -69,6 +74,6 @@ const deleteProduct = asyncHandler(async(req, res) => {
         throw new Error("Product not found");
     }
     await Products.findByIdAndDelete(req.params.id);
-    res.status(200).json(product);
+    res.status(200).json({product, message: "product deleted"});
 });
 module.exports = {createProduct, updateProduct, getProducts,getProduct, deleteProduct};
