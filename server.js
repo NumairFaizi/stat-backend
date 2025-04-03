@@ -13,6 +13,8 @@ app.use(cors());
 app.use(errorHandler);
 app.use('/api/product',require('./routes/productRoutes'));
 app.use('/api/users' ,require('./routes/userRoutes'));
+app.use('/api/billing' ,require('./routes/billingRoutes'));
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

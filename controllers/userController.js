@@ -43,7 +43,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
 
     // console.log(req.body)
-    
+
     if (!username || !password) {
         res.status(400);
         throw new Error("All fields are mandatory!");
@@ -54,13 +54,11 @@ const loginUser = asyncHandler(async (req, res) => {
         const accessToken = jwt.sign({
             user: {
                 username: user.username,
-                
+
                 username: user.username,
                 id: user.id,
             },
-        }, process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "50m" }
-        );
+        }, process.env.ACCESS_TOKEN_SECRET);
         res.status(200).json({ accessToken });
     } else {
         return res.status(401).json({ message: "Invalid Credentials!!" })
