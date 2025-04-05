@@ -17,7 +17,9 @@ const billingModel = mongoose.Schema({
 
     totalItem: Number,
 
-    date: String
+    date: String, 
+
+    time: String
 }, {
     timestamps: true,
 }
