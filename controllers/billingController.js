@@ -7,16 +7,18 @@ const asyncHandler = require("express-async-handler");
 //@access private
 const addBill = asyncHandler(async (req, res) => {
 
-    const { totalAmount, totalItem, dateAndTime, billingProducts, email, customerName } = req.body
+    const { grandTotal, subTotal, discount, discountAmount,SGSTandCGST, totalItem, dateAndTime, billingProducts, email, customerName } = req.body
 
     const time = dateAndTime.split(',')[1].trim()
     const date = dateAndTime.split(',')[0].trim()
 
-    const newBill = new billingModel({ totalAmount, totalItem, date, time, billingProducts, email, customerName })
-
+    
+    const newBill = new billingModel({ grandTotal, subTotal, discount, discountAmount, SGSTandCGST, totalItem, date, time, billingProducts, email, customerName })
+    
     // console.log(newBill)
-
+    
     const savedBill = await newBill.save()
+    console.log(savedBill)
     res.status(200).json({ message: 'Bill added successfully' })
 
 });
