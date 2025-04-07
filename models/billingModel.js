@@ -18,6 +18,8 @@ const billingModel = mongoose.Schema({
     discountAmount: Number,
 
     SGSTandCGST: Number,
+
+    CGSTAmount: Number,
     
     subTotal: Number,
     
