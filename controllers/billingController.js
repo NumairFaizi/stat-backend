@@ -1,25 +1,37 @@
-//@desc create bill
-//@route GET /api/bill
-
 const billingModel = require("../models/billingModel");
 const asyncHandler = require("express-async-handler");
+const productsModel = require('../models/productsModel')
 
+//@desc create bill
+//@route GET /api/bill
 //@access private
 const addBill = asyncHandler(async (req, res) => {
 
-    const { grandTotal, subTotal, discount, discountAmount,SGSTandCGST, CGSTAmount, totalItem, dateAndTime, billingProducts, email, customerName, paymentMethod } = req.body
+    // console.log(req.body)
+
+    const { grandTotal, subTotal, discount, discountAmount, SGSTandCGST, CGSTAmount, totalItem, dateAndTime, billingProducts, email, customerName, paymentMethod } = req.body
 
     const time = dateAndTime.split(',')[1].trim()
     const date = dateAndTime.split(',')[0].trim()
 
-    
+
     const newBill = new billingModel({ grandTotal, subTotal, discount, discountAmount, SGSTandCGST, CGSTAmount, totalItem, date, time, billingProducts, email, customerName, paymentMethod })
-    
+
     // console.log(newBill)
-    
+
     const savedBill = await newBill.save()
-    console.log(savedBill)
+
+    // console.log(savedBill)
     res.status(200).json({ message: 'Bill added successfully' })
+
+    let newProdu = [{}]
+    for (const products of req.body.billingProducts) {
+
+        const prod  = await productsModel.findByIdAndUpdate({ _id: products.id }, { $inc: { qty: -Number(products.qty) } })
+
+        newProdu.push(prod)
+    }
+    console.log(newProdu)
 
 });
 
